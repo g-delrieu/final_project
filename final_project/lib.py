@@ -48,6 +48,24 @@ def clean_data(data):
     return data
 
 
+def get_ingredients(section):
+
+    page = requests.get(f'https://www.bbc.co.uk/food/{section}')
+    soup = BeautifulSoup(page.content, 'html.parser')
+    ingredients = []
+
+    for a in soup.find_all('a', class_ ="promo promo__main_course" ):
+        npage = requests.get(f'https://www.bbc.co.uk{a["href"]}')
+        soup = BeautifulSoup(npage.content, 'html.parser')
+        ingredient = []
+        for a in soup.find_all('li', class_ = "recipe-ingredients__list-item"):
+            ingredient.append(a.get_text())
+
+        ingredients.append(ingredient)
+
+    return ingredients
+
+
 if __name__ == '__main__':
     # For introspections purpose to quickly get this functions on ipython
     import final_project
